@@ -94,7 +94,7 @@ return array(
 	 * default_timezone		optional, if you want to change the server's default timezone
 	 */
 	// 'server_gmt_offset'  => 0,
-	'default_timezone'   => 'Asia/Tokyo',
+	'default_timezone'   => 'Asia/Ho_Chi_Minh',
 
 	/**
 	 * Logging Threshold.  Can be set to any of the following:
@@ -332,7 +332,9 @@ return array(
     'authorize' => true,
     'unauthorize_url' => array(),
     'admin_authorize_url' => array(),
-    'unauthorize_basic_token_url' => array(),
+    'unauthorize_basic_token_url' => array(
+        'versions/check'
+    ),
     
     'api_check_security' => true,
     'api_secret_key' => 'campusan',

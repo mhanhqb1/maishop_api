@@ -199,7 +199,7 @@ class Database_MySQL_Connection extends \Database_Connection
 	 *
 	 * @param string $timezone
 	 */
-    public function set_timezone($timezone = '+9:00')
+    public function set_timezone($timezone = '+7:00')
 	{
 		// Make sure the database is connected
 		$this->_connection or $this->connect();		

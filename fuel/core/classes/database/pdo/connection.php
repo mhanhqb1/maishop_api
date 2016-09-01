@@ -186,7 +186,7 @@ class Database_PDO_Connection extends \Database_Connection
 	 *
 	 * @param string $timezone
 	 */
-    public function set_timezone($timezone = '+9:00')
+    public function set_timezone($timezone = '+7:00')
 	{ 
         \LogLib::info('time_zone', __METHOD__);
 		// Make sure the database is connected

@@ -40,7 +40,7 @@ class Model_Authenticate extends Model_Abstract {
      * @return bool|array Returns the boolean or the array.	
      */
     public static function check_token() {
-        return false;
+        return true;
     }
 
 }
