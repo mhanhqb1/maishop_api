@@ -6,16 +6,16 @@
  * @package Controller
  * @created 2016-08-31
  * @version 1.0
- * @author AnhNH
+ * @author AnhMH
  * @copyright Oceanize INC
  */
-class Controller_Versions extends \Controller_App {
+class Controller_Districts extends \Controller_App {
 
     /**
      * Check current version for updating app
      */
-    public function action_check() {
-        return \Bus\Versions_Check::getInstance()->execute();
+    public function action_list() {
+        return \Bus\Districts_List::getInstance()->execute();
     }
 
 }

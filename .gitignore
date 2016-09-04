@@ -1,2 +1,4 @@
 fuel/app/config/development/
 fuel/app/logs/
+/nbproject/private/
+nbproject/

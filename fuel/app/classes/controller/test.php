@@ -15,6 +15,9 @@ class Controller_Test extends \Controller_Rest {
      * 
      */
     public function action_index() {
+        $param = array();
+        $data = Model_District::get_list($param);
+        print_r($data);exit();
         echo date('Y-m-d H:i:s');
         echo '<br/>';
         echo date_default_timezone_get();
