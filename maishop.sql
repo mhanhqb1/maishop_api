@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50505
 File Encoding         : 65001
 
-Date: 2016-09-04 11:24:11
+Date: 2016-09-05 15:57:46
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -26,6 +26,20 @@ CREATE TABLE `attributes` (
   `disable` tinyint(4) DEFAULT NULL,
   `created` int(11) DEFAULT NULL,
   `updated` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for authenticates
+-- ----------------------------
+DROP TABLE IF EXISTS `authenticates`;
+CREATE TABLE `authenticates` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `user_id` int(11) NOT NULL COMMENT '`user_id/admin_id base on type',
+  `token` varchar(255) NOT NULL COMMENT 'トークン',
+  `expire_date` int(11) NOT NULL COMMENT 'トークンの期限',
+  `regist_type` varchar(20) NOT NULL COMMENT 'user/admin',
+  `created` int(11) DEFAULT NULL COMMENT '作成日',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -97,10 +111,7 @@ DROP TABLE IF EXISTS `products`;
 CREATE TABLE `products` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `cate_id` int(11) NOT NULL,
-  `price` decimal(10,0) NOT NULL,
-  `name` varchar(255) DEFAULT NULL,
-  `description` varchar(255) DEFAULT NULL,
-  `detail` text,
+  `price` decimal(10,0) DEFAULT NULL,
   `is_feature` tinyint(4) DEFAULT '0',
   `disable` tinyint(4) DEFAULT NULL,
   `created` int(11) DEFAULT NULL,
@@ -131,6 +142,22 @@ CREATE TABLE `product_images` (
   `product_id` int(11) DEFAULT NULL,
   `image` varchar(255) DEFAULT NULL,
   `is_default` tinyint(4) DEFAULT NULL,
+  `created` int(11) DEFAULT NULL,
+  `updated` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for product_information
+-- ----------------------------
+DROP TABLE IF EXISTS `product_information`;
+CREATE TABLE `product_information` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `product_id` int(11) DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `description` varchar(255) DEFAULT NULL,
+  `detail` text,
+  `language_type` int(11) DEFAULT '1',
   `created` int(11) DEFAULT NULL,
   `updated` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
@@ -210,3 +237,9 @@ CREATE TABLE `wards` (
   PRIMARY KEY (`wardid`),
   KEY `districtid` (`districtid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+DROP TRIGGER IF EXISTS `before_insert_authenticates`;
+DELIMITER ;;
+CREATE TRIGGER `before_insert_authenticates` BEFORE INSERT ON `authenticates` FOR EACH ROW SET 
+	new.created = UNIX_TIMESTAMP()
+;;
+DELIMITER ;
