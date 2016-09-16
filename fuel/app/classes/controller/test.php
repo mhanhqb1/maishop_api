@@ -15,8 +15,11 @@ class Controller_Test extends \Controller_Rest {
      * 
      */
     public function action_index() {
-        $param = array();
-        $data = Model_District::get_list($param);
+        $param = array(
+            'cate_id' => 1,
+            'price' => '100'
+        );
+        $data = Model_Product::get_list($param);
         print_r($data);exit();
         echo date('Y-m-d H:i:s');
         echo '<br/>';

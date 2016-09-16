@@ -330,12 +330,14 @@ return array(
     'time_batch' => 2 * 60,
     
     'authorize' => true,
-    'unauthorize_url' => array(),
+    'unauthorize_url' => array(
+        'products/list'
+    ),
     'admin_authorize_url' => array(),
     'unauthorize_basic_token_url' => array(
         'versions/check'
     ),
     
     'api_check_security' => true,
-    'api_secret_key' => 'campusan',
+    'api_secret_key' => 'maishop',
 );
