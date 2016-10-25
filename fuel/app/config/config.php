@@ -331,7 +331,8 @@ return array(
     
     'authorize' => true,
     'unauthorize_url' => array(
-        'products/list'
+        'products/list',
+        'admins/login'
     ),
     'admin_authorize_url' => array(),
     'unauthorize_basic_token_url' => array(
@@ -340,4 +341,7 @@ return array(
     
     'api_check_security' => true,
     'api_secret_key' => 'maishop',
+    'api_request_minute' => 10,// Minute
+    'api_token_expire' => time() + 30 * 24 * 60 * 60, // 30 days
+    'page_size' => 10
 );
