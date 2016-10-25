@@ -332,6 +332,7 @@ return array(
     'authorize' => true,
     'unauthorize_url' => array(
         'products/list',
+        'products/detail',
         'admins/login'
     ),
     'admin_authorize_url' => array(),

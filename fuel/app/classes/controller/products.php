@@ -24,5 +24,11 @@ class Controller_Products extends \Controller_App {
     public function action_addUpdate() {
         return \Bus\Products_AddUpdate::getInstance()->execute();
     }
-
+    
+    /**
+     * Product detail
+     */
+    public function action_detail() {
+        return \Bus\Products_Detail::getInstance()->execute();
+    }
 }
