@@ -60,7 +60,9 @@ class Model_Product extends Model_Abstract {
             ->from(self::$_table_name)
             ->join('product_informations', 'LEFT')
             ->on(self::$_table_name.'.id', '=', 'product_informations.product_id')
-            ->join('product_images', 'LEFT')
+            ->join(DB::expr(
+                    '(SELECT * FROM product_images WHERE is_default = 1) as product_images'
+                    ), 'LEFT')
             ->on(self::$_table_name.'.id', '=', 'product_images.product_id')
         ;
 
@@ -71,7 +73,11 @@ class Model_Product extends Model_Abstract {
         if (isset($param['disable'])) {
             $query->where(self::$_table_name.'.disable', '=', $param['disable']);
         }
-        
+        $query->group_by(self::$_table_name.'.id');
+        if (!empty($param['page']) && !empty($param['limit'])) {
+            $offset = ($param['page'] - 1) * $param['limit'];
+            $query->limit($param['limit'])->offset($offset);
+        }
         $data = $query->execute(self::$slave_db)->as_array();
         $total = !empty($data) ? DB::count_last_query(self::$slave_db) : 0;
         
@@ -108,17 +114,24 @@ class Model_Product extends Model_Abstract {
             ->where(self::$_table_name.'.id', $param['id'])
         ;
 
-//        if (!empty($param['language_type'])) {
-//            $query->where('product_information.language_type', '=', $param['language_type']);
-//        }
-        
         if (isset($param['disable'])) {
             $query->where(self::$_table_name.'.disable', '=', $param['disable']);
         }
         
-        $data = $query->execute(self::$slave_db)->as_array();
+        $data = $query->execute(self::$slave_db)->offsetGet(0);
         
-        return !empty($data[0]) ? $data[0] : array();
+        if (!empty($param['get_product_images'])) {
+            $images = Model_Product_Image::get_list(array(
+                'product_id' => $param['id']
+            ));
+            if (!empty($images['total'])) {
+                $data['total_images'] = $images['total'];
+            }
+            if (!empty($images['data'])) {
+                $data['images'] = $images['data'];
+            }
+        }
+        return $data;
     }
     
     /**

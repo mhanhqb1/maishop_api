@@ -19,7 +19,7 @@ class Controller_Test extends \Controller_Rest {
             'cate_id' => 1,
             'price' => '100'
         );
-        $data = Model_Product::get_list($param);
+        $data = Model_Product_Image::get_list($param);
         print_r($data);exit();
         echo date('Y-m-d H:i:s');
         echo '<br/>';
