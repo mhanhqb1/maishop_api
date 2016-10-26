@@ -62,6 +62,22 @@ class Model_Report extends Model_Abstract {
             ->execute(self::$slave_db)
             ->offsetGet(0);
         
+        $count_categories = DB::select(
+                DB::expr("COUNT(id) AS cnt")
+            )
+            ->from('categories')
+            ->where('categories.disable', '0')
+            ->execute(self::$slave_db)
+            ->offsetGet(0);
+        
+         $count_products = DB::select(
+                DB::expr("COUNT(id) AS cnt")
+            )
+            ->from('products')
+            ->where('products.disable', '0')
+            ->execute(self::$slave_db)
+            ->offsetGet(0);
+        
         if (!empty($param['get_new_orders'])) {
             $new_orders = DB::select(
                     'orders.*'
@@ -87,6 +103,7 @@ class Model_Report extends Model_Abstract {
                 ->on('product_images.product_id', '=', 'products.id')
                 ->where('products.disable', '0')
                 ->order_by('products.created', 'DESC')
+                ->group_by('products.id')
                 ->limit(10)
                 ->execute(self::$slave_db)
                 ->as_array();
@@ -97,6 +114,8 @@ class Model_Report extends Model_Abstract {
             'count_order' => !empty($count_order['cnt']) ? $count_order['cnt'] : 0,
             'count_price_in_month' => !empty($count_price_in_month['cnt']) ? $count_price_in_month['cnt'] : 0,
             'count_price' => !empty($count_price['cnt']) ? $count_price['cnt'] : 0,
+            'count_product' => !empty($count_products['cnt']) ? $count_products['cnt'] : 0,
+            'count_category' => !empty($count_categories['cnt']) ? $count_categories['cnt'] : 0,
             'products' => !empty($new_products) ? $new_products : array(),
             'orders' => !empty($new_orders) ? $new_orders : array(),
         );
