@@ -173,4 +173,42 @@ class Model_Order extends Model_Abstract {
         }
         return false;
     }
+    
+    /**
+     * Get detail
+     * @param type $param
+     * @return boolean
+     */
+    public static function get_detail($param) {
+        if (empty($param['id'])) {
+            self::errorNotExist('order_id');
+            return false;
+        }
+        $query = DB::select(
+                self::$_table_name.'.*',
+                array('provinces.name', 'provinces_name'),
+                array('districts.name', 'districts_name')
+            )
+            ->from(self::$_table_name)
+            ->join('provinces', 'LEFT')
+            ->on('provinces.provinceid', '=', self::$_table_name.'.province_id')
+            ->join('districts', 'LEFT')
+            ->on('districts.districtid', '=', self::$_table_name.'.district_id')
+            ->where(self::$_table_name.'.id', $param['id'])
+        ;
+
+        if (isset($param['disable'])) {
+            $query->where(self::$_table_name.'.disable', '=', $param['disable']);
+        }
+        
+        $data = $query->execute(self::$slave_db)->offsetGet(0);
+        
+        if (!empty($data) && !empty($param['get_products'])) {
+            $orderProducts = Model_Order_Product::get_all(array(
+                'order_id' => $param['id']
+            ));
+            $data['products'] = $orderProducts;
+        }
+        return $data;
+    }
 }

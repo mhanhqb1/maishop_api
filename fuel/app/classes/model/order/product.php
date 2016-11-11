@@ -73,4 +73,90 @@ class Model_Order_Product extends Model_Abstract {
         return false;
     }
     
+    /**
+     * Get list
+     *
+     * @author AnhMH
+     * @param array array $param Input data.
+     * @return array Returns array(total, data).
+     */
+    public static function get_list($param)
+    {
+        $query = DB::select(
+                    self::$_table_name . '.*'
+                )
+                ->from(self::$_table_name);        
+        if (!empty($param['order_id'])) {
+            $query->where('order_id', '=', $param['order_id']);
+        }
+        
+        if (!empty($param['sort'])) {
+            if (!self::checkSort($param['sort'])) {
+                self::errorParamInvalid('sort');
+                return false;
+            }
+
+            $sortExplode = explode('-', $param['sort']);
+            if ($sortExplode[0] == 'created') {
+                $sortExplode[0] = self::$_table_name . '.created';
+            }
+            $query->order_by($sortExplode[0], $sortExplode[1]);
+        } else {
+            $query->order_by(self::$_table_name . '.created', 'DESC');
+        }
+        if (!empty($param['page']) && !empty($param['limit'])) {
+            $offset = ($param['page'] - 1) * $param['limit'];
+            $query->limit($param['limit'])->offset($offset);
+        }
+        $data = $query->execute(self::$slave_db)->as_array();
+        $total = !empty($data) ? DB::count_last_query(self::$slave_db) : 0;
+
+        return array($total, $data);
+    }
+    
+    /**
+     * Get all
+     *
+     * @author AnhMH
+     * @param array array $param Input data.
+     * @return array Returns array(total, data).
+     */
+    public static function get_all($param)
+    {
+        $query = DB::select(
+                    self::$_table_name . '.*',
+                    array('product_informations.name', 'product_name'),
+                    array('products.price', 'product_price')
+                )
+                ->from(self::$_table_name)
+                ->join('products', 'LEFT')
+                ->on('products.id', '=', self::$_table_name.'.product_id')
+                ->join('product_informations', 'LEFT')
+                ->on('product_informations.product_id', '=', self::$_table_name.'.product_id');
+        
+        if (!empty($param['order_id'])) {
+            $query->where('order_id', '=', $param['order_id']);
+        }
+        
+        if (!empty($param['sort'])) {
+            if (!self::checkSort($param['sort'])) {
+                self::errorParamInvalid('sort');
+                return false;
+            }
+            $sortExplode = explode('-', $param['sort']);
+            if ($sortExplode[0] == 'created') {
+                $sortExplode[0] = self::$_table_name . '.created';
+            }
+            $query->order_by($sortExplode[0], $sortExplode[1]);
+        } else {
+            $query->order_by(self::$_table_name . '.created', 'DESC');
+        }
+        if (!empty($param['page']) && !empty($param['limit'])) {
+            $offset = ($param['page'] - 1) * $param['limit'];
+            $query->limit($param['limit'])->offset($offset);
+        }
+        $data = $query->execute(self::$slave_db)->as_array();
+
+        return $data;
+    }
 }

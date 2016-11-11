@@ -19,8 +19,9 @@ class Controller_Test extends \Controller_Rest {
 //            'name' => 'update',
 //            'price_from' => 100,
 //            'price_to' => 150
+            'order_id' => 1
         );
-        $data = Model_Order::get_list($param);
+        $data = Model_Order_Product::get_all($param);
         print_r($data);exit();
         echo date('Y-m-d H:i:s');
         echo '<br/>';
