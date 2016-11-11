@@ -22,7 +22,8 @@ class Model_Product_Image extends Model_Abstract {
         'detail',
         'language_type',
         'created',
-        'updated'
+        'updated',
+        'disable'
     );
     
     protected static $_observers = array(
@@ -51,6 +52,7 @@ class Model_Product_Image extends Model_Abstract {
                 self::$_table_name.'.image',
                 self::$_table_name.'.is_default',
                 self::$_table_name.'.created',
+                self::$_table_name.'.disable',
                 'product_informations.name'
             )
             ->from(self::$_table_name)
@@ -136,6 +138,34 @@ class Model_Product_Image extends Model_Abstract {
             return !empty($self->id) ? $self->id : 0;
         }
         return false;
+    }
+    
+    /**
+     * Disable/Enable a product image.
+     *
+     * @author AnhMH
+     * @param array array $param Input data.
+     * @return bool Returns the boolean.
+     */
+    public static function disable($param)
+    {
+        if (!isset($param['disable'])) {
+            return false;
+        }
+        $ids = explode(',', $param['id']);
+        foreach ($ids as $id) {
+            $admin = self::find($id);
+            if ($admin) {
+                $admin->set('disable', $param['disable']);
+                if (!$admin->save()) {
+                    return false;
+                }
+            } else {
+                self::errorNotExist('product_image_id');
+                return false;
+            }
+        }
+        return true;
     }
     
 }

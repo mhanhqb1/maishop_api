@@ -52,6 +52,7 @@ class Model_Product extends Model_Abstract {
                 self::$_table_name.'.stock',
                 self::$_table_name.'.is_feature',
                 self::$_table_name.'.created',
+                self::$_table_name.'.disable',
                 'product_informations.name',
                 'product_informations.description',
                 'product_informations.detail',
@@ -70,14 +71,32 @@ class Model_Product extends Model_Abstract {
 //            $query->where('product_information.language_type', '=', $param['language_type']);
 //        }
         
+        if (!empty($param['name'])) {
+            $query->where('product_informations.name', 'LIKE', "%{$param['name']}%");
+        }
+        
+        if (!empty($param['price_from'])) {
+            $query->where(self::$_table_name.'.price', '>=', $param['price_from']);
+        }
+        
+        if (!empty($param['price_to'])) {
+            $query->where(self::$_table_name.'.price', '<=', $param['price_to']);
+        }
+        
         if (isset($param['disable'])) {
             $query->where(self::$_table_name.'.disable', '=', $param['disable']);
         }
-        $query->group_by(self::$_table_name.'.id');
         if (!empty($param['page']) && !empty($param['limit'])) {
             $offset = ($param['page'] - 1) * $param['limit'];
             $query->limit($param['limit'])->offset($offset);
         }
+         if (!empty($param['sort'])) {
+            $sortExplode = explode('-', $param['sort']);
+            $query->order_by($sortExplode[0], $sortExplode[1]);
+        } else {
+            $query->order_by(self::$_table_name . '.created', 'DESC');
+        }
+        $query->group_by(self::$_table_name.'.id');
         $data = $query->execute(self::$slave_db)->as_array();
         $total = !empty($data) ? DB::count_last_query(self::$slave_db) : 0;
         
@@ -175,6 +194,34 @@ class Model_Product extends Model_Abstract {
             return !empty($self->id) ? $self->id : 0;
         }
         return false;
+    }
+    
+    /**
+     * Disable/Enable a product.
+     *
+     * @author AnhMH
+     * @param array array $param Input data.
+     * @return bool Returns the boolean.
+     */
+    public static function disable($param)
+    {
+        if (!isset($param['disable'])) {
+            return false;
+        }
+        $ids = explode(',', $param['id']);
+        foreach ($ids as $id) {
+            $admin = self::find($id);
+            if ($admin) {
+                $admin->set('disable', $param['disable']);
+                if (!$admin->save()) {
+                    return false;
+                }
+            } else {
+                self::errorNotExist('product_id');
+                return false;
+            }
+        }
+        return true;
     }
     
 }

@@ -24,4 +24,11 @@ class Controller_ProductImages extends \Controller_App {
     public function action_addUpdate() {
         return \Bus\ProductImages_AddUpdate::getInstance()->execute();
     }
+    
+    /**
+     * Add or disable ProductImages
+     */
+    public function action_disable() {
+        return \Bus\ProductImages_Disable::getInstance()->execute();
+    }
 }

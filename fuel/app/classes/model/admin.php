@@ -149,7 +149,7 @@ class Model_Admin extends Model_Abstract {
     public static function disable($param)
     {
         if (!isset($param['disable'])) {
-            $param['disable'] = '1';
+            return false;
         }
         $ids = explode(',', $param['id']);
         foreach ($ids as $id) {

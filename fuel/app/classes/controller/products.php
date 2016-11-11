@@ -31,4 +31,11 @@ class Controller_Products extends \Controller_App {
     public function action_detail() {
         return \Bus\Products_Detail::getInstance()->execute();
     }
+    
+    /**
+     * Product diable
+     */
+    public function action_disable() {
+        return \Bus\Products_Disable::getInstance()->execute();
+    }
 }
