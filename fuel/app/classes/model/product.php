@@ -224,4 +224,67 @@ class Model_Product extends Model_Abstract {
         return true;
     }
     
+    /**
+     * Get all
+     * @param type $param
+     * @return boolean
+     */
+    public static function get_all($param) {
+        $query = DB::select(
+                self::$_table_name.'.id',
+                self::$_table_name.'.price',
+                self::$_table_name.'.cate_id',
+                self::$_table_name.'.stock',
+                self::$_table_name.'.is_feature',
+                self::$_table_name.'.created',
+                self::$_table_name.'.disable',
+                'product_informations.name',
+                'product_informations.description',
+                'product_informations.detail',
+                'product_images.image'
+            )
+            ->from(self::$_table_name)
+            ->join('product_informations', 'LEFT')
+            ->on(self::$_table_name.'.id', '=', 'product_informations.product_id')
+            ->join(DB::expr(
+                    '(SELECT * FROM product_images WHERE is_default = 1) as product_images'
+                    ), 'LEFT')
+            ->on(self::$_table_name.'.id', '=', 'product_images.product_id')
+        ;
+
+//        if (!empty($param['language_type'])) {
+//            $query->where('product_information.language_type', '=', $param['language_type']);
+//        }
+        
+        if (!empty($param['name'])) {
+            $query->where('product_informations.name', 'LIKE', "%{$param['name']}%");
+        }
+        
+        if (!empty($param['price_from'])) {
+            $query->where(self::$_table_name.'.price', '>=', $param['price_from']);
+        }
+        
+        if (!empty($param['price_to'])) {
+            $query->where(self::$_table_name.'.price', '<=', $param['price_to']);
+        }
+        
+        if (isset($param['disable'])) {
+            $query->where(self::$_table_name.'.disable', '=', $param['disable']);
+        }
+        if (!empty($param['page']) && !empty($param['limit'])) {
+            $offset = ($param['page'] - 1) * $param['limit'];
+            $query->limit($param['limit'])->offset($offset);
+        }
+         if (!empty($param['sort'])) {
+            $sortExplode = explode('-', $param['sort']);
+            $query->order_by($sortExplode[0], $sortExplode[1]);
+        } else {
+            $query->order_by(self::$_table_name . '.created', 'DESC');
+        }
+        $query->group_by(self::$_table_name.'.id');
+        $data = $query->execute(self::$slave_db)->as_array();
+        
+        return $data;
+    }
+    
 }

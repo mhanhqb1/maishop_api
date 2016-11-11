@@ -38,4 +38,11 @@ class Controller_Products extends \Controller_App {
     public function action_disable() {
         return \Bus\Products_Disable::getInstance()->execute();
     }
+    
+    /**
+     * Product all
+     */
+    public function action_all() {
+        return \Bus\Products_All::getInstance()->execute();
+    }
 }
