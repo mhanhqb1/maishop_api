@@ -126,13 +126,18 @@ class Model_Order_Product extends Model_Abstract {
         $query = DB::select(
                     self::$_table_name . '.*',
                     array('product_informations.name', 'product_name'),
-                    array('products.price', 'product_price')
+                    array('product_informations.description', 'product_description'),
+                    array('products.price', 'product_price'),
+                    array('product_images.image', 'product_image')
                 )
                 ->from(self::$_table_name)
                 ->join('products', 'LEFT')
                 ->on('products.id', '=', self::$_table_name.'.product_id')
                 ->join('product_informations', 'LEFT')
-                ->on('product_informations.product_id', '=', self::$_table_name.'.product_id');
+                ->on('product_informations.product_id', '=', self::$_table_name.'.product_id')
+                ->join(DB::expr("(SELECT image, product_id FROM product_images GROUP BY product_id ORDER BY is_default DESC) AS product_images"), 'LEFT')
+                ->on('product_images.product_id', '=', self::$_table_name.'.product_id')
+        ;
         
         if (!empty($param['order_id'])) {
             $query->where('order_id', '=', $param['order_id']);
