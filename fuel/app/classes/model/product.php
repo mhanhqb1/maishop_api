@@ -268,6 +268,10 @@ class Model_Product extends Model_Abstract {
             $query->where(self::$_table_name.'.price', '<=', $param['price_to']);
         }
         
+        if (isset($param['is_feature'])) {
+            $query->where(self::$_table_name.'.is_feature', '=', $param['is_feature']);
+        }
+        
         if (isset($param['disable'])) {
             $query->where(self::$_table_name.'.disable', '=', $param['disable']);
         }
