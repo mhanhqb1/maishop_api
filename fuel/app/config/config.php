@@ -331,12 +331,18 @@ return array(
     
     'authorize' => true,
     'unauthorize_url' => array(
-        'products/list',
         'products/detail',
+        'products/all',
         'admins/login',
-        'products/all'
+        'categories/all',
+        'categories/detail'
     ),
-    'admin_authorize_url' => array(),
+    'admin_authorize_url' => array(
+        'categories/list',
+        'categories/disable',
+        'products/disable',
+        'products/list',
+    ),
     'unauthorize_basic_token_url' => array(
         'versions/check'
     ),
