@@ -45,4 +45,11 @@ class Controller_Products extends \Controller_App {
     public function action_all() {
         return \Bus\Products_All::getInstance()->execute();
     }
+    
+    /**
+     * Product autocomplete
+     */
+    public function action_autocomplete() {
+        return \Bus\Products_Autocomplete::getInstance()->execute();
+    }
 }
