@@ -56,11 +56,14 @@ class Model_Product extends Model_Abstract {
                 'product_informations.name',
                 'product_informations.description',
                 'product_informations.detail',
-                'product_images.image'
+                'product_images.image',
+                array('categories.name', 'cate_name')
             )
             ->from(self::$_table_name)
             ->join('product_informations', 'LEFT')
             ->on(self::$_table_name.'.id', '=', 'product_informations.product_id')
+            ->join('categories', 'LEFT')
+            ->on(self::$_table_name.'.cate_id', '=', 'categories.id')    
             ->join(DB::expr(
                     '(SELECT * FROM product_images WHERE is_default = 1) as product_images'
                     ), 'LEFT')
@@ -81,6 +84,10 @@ class Model_Product extends Model_Abstract {
         
         if (!empty($param['price_to'])) {
             $query->where(self::$_table_name.'.price', '<=', $param['price_to']);
+        }
+        
+        if (isset($param['cate_id'])) {
+            $query->where(self::$_table_name.'.cate_id', '=', $param['cate_id']);
         }
         
         if (isset($param['disable'])) {
@@ -266,6 +273,10 @@ class Model_Product extends Model_Abstract {
         
         if (!empty($param['price_to'])) {
             $query->where(self::$_table_name.'.price', '<=', $param['price_to']);
+        }
+        
+        if (isset($param['cate_id'])) {
+            $query->where(self::$_table_name.'.cate_id', '=', $param['cate_id']);
         }
         
         if (isset($param['is_feature'])) {

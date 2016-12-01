@@ -335,13 +335,13 @@ return array(
         'products/all',
         'admins/login',
         'categories/all',
-        'categories/detail'
+        'categories/detail',
+        'products/list',
     ),
     'admin_authorize_url' => array(
         'categories/list',
         'categories/disable',
         'products/disable',
-        'products/list',
     ),
     'unauthorize_basic_token_url' => array(
         'versions/check'
