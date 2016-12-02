@@ -56,11 +56,14 @@ class Model_Product extends Model_Abstract {
                 'product_informations.name',
                 'product_informations.description',
                 'product_informations.detail',
-                'product_images.image'
+                'product_images.image',
+                array('categories.name', 'cate_name')
             )
             ->from(self::$_table_name)
             ->join('product_informations', 'LEFT')
             ->on(self::$_table_name.'.id', '=', 'product_informations.product_id')
+            ->join('categories', 'LEFT')
+            ->on(self::$_table_name.'.cate_id', '=', 'categories.id')    
             ->join(DB::expr(
                     '(SELECT * FROM product_images WHERE is_default = 1) as product_images'
                     ), 'LEFT')
@@ -81,6 +84,10 @@ class Model_Product extends Model_Abstract {
         
         if (!empty($param['price_to'])) {
             $query->where(self::$_table_name.'.price', '<=', $param['price_to']);
+        }
+        
+        if (isset($param['cate_id'])) {
+            $query->where(self::$_table_name.'.cate_id', '=', $param['cate_id']);
         }
         
         if (isset($param['disable'])) {
@@ -268,6 +275,10 @@ class Model_Product extends Model_Abstract {
             $query->where(self::$_table_name.'.price', '<=', $param['price_to']);
         }
         
+        if (isset($param['cate_id'])) {
+            $query->where(self::$_table_name.'.cate_id', '=', $param['cate_id']);
+        }
+        
         if (isset($param['is_feature'])) {
             $query->where(self::$_table_name.'.is_feature', '=', $param['is_feature']);
         }
@@ -288,6 +299,35 @@ class Model_Product extends Model_Abstract {
         $query->group_by(self::$_table_name.'.id');
         $data = $query->execute(self::$slave_db)->as_array();
         
+        return $data;
+    }
+    
+    /**
+     * Get detail for cart
+     * @param type $param
+     * @return boolean
+     */
+    public static function get_detail_for_cart($param) {
+        if (empty($param['product_id'])) {
+            self::errorNotExist('product_id');
+            return false;
+        }
+        $query = DB::select(
+                self::$_table_name.'.id',
+                self::$_table_name.'.price',
+                'product_informations.name',
+                'product_images.image'
+            )
+            ->from(self::$_table_name)
+            ->join('product_informations', 'LEFT')
+            ->on(self::$_table_name.'.id', '=', 'product_informations.product_id')
+            ->join(DB::expr(
+                    '(SELECT image, product_id FROM product_images ORDER BY is_default DESC LIMIT 1) as product_images'
+                    ), 'LEFT')
+            ->on(self::$_table_name.'.id', '=', 'product_images.product_id')
+            ->where(self::$_table_name.'.id', $param['product_id'])
+        ;
+        $data = $query->execute(self::$slave_db)->offsetGet(0);
         return $data;
     }
     
