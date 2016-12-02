@@ -302,4 +302,33 @@ class Model_Product extends Model_Abstract {
         return $data;
     }
     
+    /**
+     * Get detail for cart
+     * @param type $param
+     * @return boolean
+     */
+    public static function get_detail_for_cart($param) {
+        if (empty($param['product_id'])) {
+            self::errorNotExist('product_id');
+            return false;
+        }
+        $query = DB::select(
+                self::$_table_name.'.id',
+                self::$_table_name.'.price',
+                'product_informations.name',
+                'product_images.image'
+            )
+            ->from(self::$_table_name)
+            ->join('product_informations', 'LEFT')
+            ->on(self::$_table_name.'.id', '=', 'product_informations.product_id')
+            ->join(DB::expr(
+                    '(SELECT image, product_id FROM product_images ORDER BY is_default DESC LIMIT 1) as product_images'
+                    ), 'LEFT')
+            ->on(self::$_table_name.'.id', '=', 'product_images.product_id')
+            ->where(self::$_table_name.'.id', $param['product_id'])
+        ;
+        $data = $query->execute(self::$slave_db)->offsetGet(0);
+        return $data;
+    }
+    
 }

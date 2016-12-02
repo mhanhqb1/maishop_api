@@ -33,6 +33,13 @@ class Controller_Products extends \Controller_App {
     }
     
     /**
+     * Product detail for cart
+     */
+    public function action_detailforcart() {
+        return \Bus\Products_DetailForCart::getInstance()->execute();
+    }
+    
+    /**
      * Product diable
      */
     public function action_disable() {
