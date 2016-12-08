@@ -198,6 +198,19 @@ class Model_Product extends Model_Abstract {
                 $param['product_id'] = $self->id;
                 Model_Product_Information::add_update($param);
             }
+            // Upload images
+            if (!empty($_FILES)) {
+                $uploadResult = \Lib\Util::uploadImage();
+                if ($uploadResult['status'] != 200) {
+                    self::setError($uploadResult['error']);            
+                    return false;
+                }
+                Model_Product_Image::add_update(array(
+                    'product_id' => $self->id,
+                    'is_default' => 1,
+                    'image' => $uploadResult['body']
+                ));
+            }
             return !empty($self->id) ? $self->id : 0;
         }
         return false;
