@@ -15,13 +15,14 @@ class Controller_Test extends \Controller_Rest {
      * 
      */
     public function action_index() {
+        echo '<pre>';
         $param = array(
 //            'name' => 'update',
 //            'price_from' => 100,
 //            'price_to' => 150
-            'order_id' => 1
+            'id' => 7
         );
-        $data = Model_Order_Product::get_all($param);
+        $data = Model_Product::get_detail($param);
         print_r($data);exit();
         echo date('Y-m-d H:i:s');
         echo '<br/>';
