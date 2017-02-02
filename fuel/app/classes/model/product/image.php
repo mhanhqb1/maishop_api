@@ -17,8 +17,10 @@ class Model_Product_Image extends Model_Abstract {
     protected static $_properties = array(
         'id',
         'product_id',
-        'image',
-        'is_default',
+        'name',
+        'description',
+        'detail',
+        'language_type',
         'created',
         'updated',
         'disable'
@@ -111,13 +113,13 @@ class Model_Product_Image extends Model_Abstract {
         
         // Upload images
         $imagePath = array();
-        if (!empty($_FILES) && empty($param['image'])) {
+        if (!empty($_FILES)) {
             $uploadResult = \Lib\Util::uploadImage($thumb = 'places');            
             if ($uploadResult['status'] != 200) {
                 self::setError($uploadResult['error']);            
                 return false;
             }
-            $param['image'] = $uploadResult['body'];
+            $imagePath = $uploadResult['body'];
         }
         
         // set value
@@ -126,9 +128,6 @@ class Model_Product_Image extends Model_Abstract {
         }
         if (!empty($param['image'])) {
             $self->set('image', $param['image']);
-        }
-        if (isset($param['is_default'])) {
-            $self->set('is_default', $param['is_default']);
         }
         
         // save to database
