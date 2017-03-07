@@ -54,6 +54,9 @@ class Model_Category extends Model_Abstract {
             ->where(self::$_table_name . '.disable', '=', 0)
         ;
         
+        if (!empty($param['name'])) {
+            $query->where(self::$_table_name.'.name', 'LIKE', $param['name']);
+        }
         if (!empty($param['page']) && !empty($param['limit'])) {
             $offset = ($param['page'] - 1) * $param['limit'];
             $query->limit($param['limit'])->offset($offset);
